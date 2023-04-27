@@ -37,4 +37,9 @@ auto queryfmkey(HKEY key, FILETIME& ft) {
   );
 }
 
+template<typename... ArgTypes>
+auto queryvalue(HKEY key, PWSTR val, ArgTypes... args) {
+  return ::RegQueryValueEx(key, val, nullptr, nullptr, args...);
+}
+
 #endif
