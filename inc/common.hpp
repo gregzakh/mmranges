@@ -7,6 +7,10 @@
   #define UNICODE
 #endif
 
+#ifndef WIN32_LEAN_AND_MEAN
+  #define WIN32_LEAN_AND_MEAN
+#endif
+
 #include <windows.h>
 #include <winternl.h>
 #include <algorithm>
@@ -46,7 +50,7 @@ void getlasterror(const DWORD ecode = ::GetLastError()) {
 #include "qrekey.hpp"
 
 constexpr auto win10rhi(void) {
-  return 10 <= *reinterpret_cast<PULONG>(0x7FFE026C);
+  return 0xA <= *reinterpret_cast<PULONG>(0x7FFE026C);
 }
 // This value specifies which API version to use when requesting
 // Superfetch data. Must be greater or equal to 0x3F65 for V2,
