@@ -16,6 +16,7 @@ int main(void) {
 
   nts = ::RtlAdjustPrivilege(13 /* SE_PROF_SINGLE_PROCESS_PRIVILEGE */, TRUE, FALSE, &did);
   if (!NT_SUCCESS(nts)) {
+    getlasterror(::RtlNtStatusToDosError(nts));
     printf("[*] Trying to retrieve required data from registry...\n\n");
     regqueryranges();
   }
@@ -62,7 +63,8 @@ void ntqueryranges(void) {
   PF_PHYSICAL_MEMORY_RANGE_INFO_V1 m1{};
   PF_PHYSICAL_MEMORY_RANGE_INFO_V2 m2{};
 
-  0x3F65 <= winbuild ? wrapper(m2, 2) : wrapper(m1, 1);
+  auto ecode = 0x3F65 <= winbuild ? wrapper(m2, 2) : wrapper(m1, 1);
+  printf("\n[%c] done.\n", ecode != 0 ? '!' : '*');
 }
 
 void regqueryranges(void) {
