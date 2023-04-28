@@ -69,6 +69,7 @@ static const auto winbuild = *reinterpret_cast<PULONG>(0x7FFE0260);
 //            AArch32 | 4KB | n/a |    1KB, 4KB     //
 //            AArch64 | 4KB | 2MB |    4KB onky     //
 //--------------------------------------------------//
+constexpr auto PageSize = 0x1000;
 constexpr auto KBytesPerPage = 0x4;
 constexpr auto Kb = 0x400;
 

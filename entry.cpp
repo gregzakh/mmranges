@@ -4,6 +4,9 @@ void ntqueryranges(void);
 void regqueryranges(void);
 
 int main(void) {
+  NTSTATUS nts{};
+  BOOLEAN did{};
+
   std::locale::global(std::locale(""));
   if (!win10rhi()) {
     ::SetLastError(1);
@@ -11,9 +14,55 @@ int main(void) {
     return 1;
   }
 
-  regqueryranges();
+  nts = ::RtlAdjustPrivilege(13 /* SE_PROF_SINGLE_PROCESS_PRIVILEGE */, TRUE, FALSE, &did);
+  if (!NT_SUCCESS(nts)) {
+    printf("[*] Trying to retrieve required data from registry...\n\n");
+    regqueryranges();
+  }
+  else ntqueryranges();
 
   return 0;
+}
+
+template<typename T>
+auto wrapper(T mr, ULONG ver) {
+  SUPERFETCH_INFORMATION si{};
+  auto req{0ul};
+  NTSTATUS nts{};
+
+  mr.Version = ver;
+  SiInitData(&si, &mr, sizeof(mr), SuperfetchMemoryRangesQuery);
+
+  nts = ::NtQuerySystemInformation(SystemSuperfetchInformation, &si, sizeof(si), &req);
+  if (STATUS_BUFFER_TOO_SMALL != nts) {
+    getlasterror(::RtlNtStatusToDosError(nts));
+    return 1;
+  }
+
+  std::vector<T> buf(req);
+  buf[0].Version = ver;
+  SiInitData(&si, &buf[0], req, SuperfetchMemoryRangesQuery);
+  nts = ::NtQuerySystemInformation(SystemSuperfetchInformation, &si, sizeof(si), &req);
+  if (!NT_SUCCESS(nts)) {
+    getlasterror(::RtlNtStatusToDosError(nts));
+    return 1;
+  }
+  printf("%16s %16s %16s\n%16s %16s %16s\n", "Start", "End", "Size", "------", "----", "-----");
+  for (auto i = 0; i < buf[0].RangeCount; i++) {
+    printf("%#16llx %#16llx %16lld K\n", buf[0].Ranges[i].BasePage * PageSize,
+      (buf[0].Ranges[i].BasePage + buf[0].Ranges[i].PageCount) * PageSize,
+      buf[0].Ranges[i].PageCount * KBytesPerPage
+    );
+  }
+
+  return 0;
+}
+
+void ntqueryranges(void) {
+  PF_PHYSICAL_MEMORY_RANGE_INFO_V1 m1{};
+  PF_PHYSICAL_MEMORY_RANGE_INFO_V2 m2{};
+
+  0x3F65 <= winbuild ? wrapper(m2, 2) : wrapper(m1, 1);
 }
 
 void regqueryranges(void) {
