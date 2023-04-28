@@ -33,6 +33,10 @@ void getlasterrot(const DWORD ecode = ::GetLastError()) {
     err("[!] LocalFree (%d) fatal error.\n", ::GetLastError());
 }
 
+#ifndef NT_PROCESSOR_GROUPS
+  #define NT_PROCESSOR_GROUPS 1
+#endif
+
 #pragma comment (lib, "advapi32.lib")
 #pragma comment (lib, "ntdll.lib")
 
