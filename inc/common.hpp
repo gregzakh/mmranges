@@ -8,6 +8,7 @@
 #endif
 
 #include <windows.h>
+#include <winternl.h>
 #include <algorithm>
 #include <functional>
 #include <cstdio>
@@ -17,7 +18,7 @@
 template<typename... ArgTypes>
 auto err(ArgTypes... args) { fprintf(stderr, args...); }
 
-void getlasterrot(const DWORD ecode = ::GetLastError()) {
+void getlasterror(const DWORD ecode = ::GetLastError()) {
   HLOCAL loc{};
   auto size = ::FormatMessage(
     FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER,

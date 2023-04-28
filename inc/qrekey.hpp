@@ -155,8 +155,8 @@ struct AutoKey {
       }
     }
 
-    operation HKEY()   { return key; }
-    HKEY* operation&() { return &key; }
+    operator HKEY()   { return key; }
+    HKEY* operator&() { return &key; }
 };
 
 auto queryfmkey(HKEY key, FILETIME& ft) {

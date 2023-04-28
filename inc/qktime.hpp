@@ -35,9 +35,9 @@ auto getdelta(std::function<void(PLARGE_INTEGER, PTIME_FIELDS)> fn, FILETIME& ft
   });
 
   auto delta = ( // registry key last modified timestamp minus boot time
-    (static_cast<LONGLONG>(ft.dwHightDateTime) << 32 | ft.dwLowDateTime) - vals[2]
+    (static_cast<LONGLONG>(ft.dwHighDateTime) << 32 | ft.dwLowDateTime) - vals[2]
   ) - (vals[1] - vals[2] - vals[0]);
-  fn(reinterpret_cast<PLARGE_INTEGER>(&delta), &ft);
+  fn(reinterpret_cast<PLARGE_INTEGER>(&delta), &tf);
 
   return tf.Second;
 }
