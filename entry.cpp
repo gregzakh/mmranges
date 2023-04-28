@@ -37,7 +37,7 @@ void regqueryranges(void) {
     for (auto i = 0; i < list->Count; i++) {
       for (auto j = 0; j < list->List[i].PartialResourceList.Count; j++) {
         auto tmp = list->List[i].PartialResourceList.PartialDescriptors[j].u.Memory;
-        printf("%#16llx %#16llx %16d K\n", tmp.Start.QuadPart, tmp.Start.QuadPart + tmp.Length, tmp.Length / 0x400);
+        printf("%#16llx %#16llx %16d K\n", tmp.Start.QuadPart, tmp.Start.QuadPart + tmp.Length, tmp.Length / Kb);
       }
     }
     printf("\n[*] Duration of setting data: %hu sec.\n", getdelta(::RtlTimeToElapsedTimeFields, ft));
